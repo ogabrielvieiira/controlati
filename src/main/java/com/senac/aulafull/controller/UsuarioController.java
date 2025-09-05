@@ -32,7 +32,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "usuario", description = "Método responsável por consultar os usuários do sistema")
+    @Operation(summary = "email", description = "Método responsável por consultar os usuários do sistema")
     public ResponseEntity<?> consultarTodos() {
 
         return ResponseEntity.ok(usuarioRepository.findAll());
