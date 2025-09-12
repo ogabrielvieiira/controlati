@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 
 function Sidebar(){
@@ -31,10 +32,10 @@ function Sidebar(){
               </a>
               <ul className="collapse list-unstyled ms-3" id="submenucadastro">
                 <li>
-                  <a className="nav-link text-light" href="/usuario">Usuário</a>
+                  <Link to="/usuario" className="nav-link text-white">Usuário</Link>
                 </li>
                 <li>
-                  <a className="nav-link text-light" href="/equipamentos">Equipamentos</a>
+                  <Link to="/equipamentos" className="nav-link text-white">Equipamentos</Link>
                 </li>
               </ul>
             </li>

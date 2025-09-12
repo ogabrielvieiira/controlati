@@ -1,21 +1,22 @@
-import Footer from "./components/footer/index";
-import Header from "./components/header/index";
-import Home from "./pages/home/index";
-import Sidebar from "./components/sidebar/index";
+import { Route, Routes } from "react-router-dom";
+import LayoutAdmin from "./components/LayoutAdmin/index";
+import Login from "./pages/login";
+import Home from "./pages/home";
+import LayoutLogin from "./components/LayoutLogin";
+import Cadastro from "./pages/cadastrese";
+
 
 function AppRoutes() {
     return(
-        <>
-            <Header/>
-            <div className="d-flex">
-                <Sidebar/>
-                <div className="flex-grow-1 p-4">
-                    <Home/>
-                </div>
-            </div>
-            
-            <Footer/>
-        </>
+        <Routes>
+            <Route element={<LayoutLogin />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/cadastro" element={<Cadastro />} />
+            </Route>
+            <Route element= {<LayoutAdmin/>}>
+                <Route path="/" element={<Home/>}/>
+            </Route>
+        </Routes>
     );
 }
 
