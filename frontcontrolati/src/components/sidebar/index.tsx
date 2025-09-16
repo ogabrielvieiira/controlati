@@ -7,14 +7,6 @@ function Sidebar(){
         <div className="d-flex">
         {/* Sidebar */}
         <div className="bg-dark text-light vh-100 p-3" style={{ width: '250px' }}>
-          <div className="mb-4 text-center">
-          <img
-        src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSJibHVlIi8+PC9zdmc+"
-        alt="logo"
-        className="img-fluid"
-        style={{ height: '50px' }}
-      />
-          </div>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
               <a className="nav-link text-light" href="/">Home</a>
