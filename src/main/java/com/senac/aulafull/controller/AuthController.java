@@ -1,6 +1,7 @@
 package com.senac.aulafull.controller;
 
 import com.senac.aulafull.dto.LoginRequestDto;
+import com.senac.aulafull.dto.LoginResponseDto;
 import com.senac.aulafull.services.TokenService;
 import com.senac.aulafull.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,6 @@ public class AuthController {
         }
         var token = tokenService.gerarToken(request);
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new LoginResponseDto(token));
     }
 }
