@@ -18,6 +18,7 @@ public class EquipamentoController {
     private EquipamentoRepository equipamentoRepository;
 
     @GetMapping("/{id}")
+    @Operation(summary = "Listar um equipamento", description = "Método responsável por consultar um equipamento específico do sistema")
     public ResponseEntity<?> consultaPorId(@PathVariable Long id) {
         var equipamento = equipamentoRepository.findById(id).
                 orElse(null);
@@ -30,7 +31,7 @@ public class EquipamentoController {
     }
 
     @GetMapping
-    @Operation(summary = "patrimonio", description = "Método responsável por consultar os equipamentos do sistema")
+    @Operation(summary = "Listar todos equipamentos", description = "Método responsável por consultar os equipamentos do sistema")
     public ResponseEntity<?> consultarTodos() {
 
         return ResponseEntity.ok(equipamentoRepository.findAll());

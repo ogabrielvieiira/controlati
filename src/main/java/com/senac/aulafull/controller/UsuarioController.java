@@ -20,6 +20,7 @@ public class UsuarioController {
     private UsuarioRepository usuarioRepository;
 
     @GetMapping("/{id}")
+    @Operation(summary = "Listar um usuário específico", description = "Método responsável por consultar um usuário específico do sistema")
     public ResponseEntity<?> consultaPorId(@PathVariable Long id) {
 
         var usuario = usuarioRepository.findById(id).
@@ -33,7 +34,7 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "email", description = "Método responsável por consultar os usuários do sistema")
+    @Operation(summary = "Listar todos os usuários", description = "Método responsável por consultar os usuários do sistema")
     public ResponseEntity<?> consultarTodos() {
 
         return ResponseEntity.ok(usuarioRepository.findAll());
