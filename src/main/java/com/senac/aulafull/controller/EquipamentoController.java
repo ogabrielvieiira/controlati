@@ -1,5 +1,6 @@
 package com.senac.aulafull.controller;
 
+import com.senac.aulafull.dto.EquipamentoRequestDto;
 import com.senac.aulafull.model.Equipamento;
 import com.senac.aulafull.repository.EquipamentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,7 +17,7 @@ public class EquipamentoController {
     @Autowired
     private EquipamentoRepository equipamentoRepository;
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<?> consultaPorId(@PathVariable Long id) {
         var equipamento = equipamentoRepository.findById(id).
                 orElse(null);
@@ -38,10 +39,12 @@ public class EquipamentoController {
 
     @PostMapping
     @Operation(summary = "Salvar Equipamento", description = "Método responsável por criar os equipamentos do sistema")
-    public ResponseEntity<?> salvarEquipamento(@RequestBody Equipamento equipamento) {
+    public ResponseEntity<?> salvarEquipamento(@RequestBody EquipamentoRequestDto equipamento) {
         try {
 
-            var equipamentoResponse = equipamentoRepository.save(equipamento);
+            var equipamentoBanco = new Equipamento(null, equipamento.tipo(), equipamento.patrimonio(), equipamento.status());
+
+            var equipamentoResponse =  equipamentoRepository.save(equipamentoBanco);
 
             return ResponseEntity.ok(equipamentoResponse);
 

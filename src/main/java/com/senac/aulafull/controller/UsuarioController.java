@@ -1,5 +1,6 @@
 package com.senac.aulafull.controller;
 
+import com.senac.aulafull.dto.UsuarioRequestDto;
 import com.senac.aulafull.model.Usuario;
 import com.senac.aulafull.repository.UsuarioRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +45,6 @@ public class UsuarioController {
     @Operation(summary = "Salvar Usuário", description = "Método responsável por criar os usuários do sistema")
     public ResponseEntity<?> salvarUsuario(@RequestBody Usuario usuario) {
         try {
-
             var usuarioResponse = usuarioRepository.save(usuario);
 
             return ResponseEntity.ok(usuarioResponse);

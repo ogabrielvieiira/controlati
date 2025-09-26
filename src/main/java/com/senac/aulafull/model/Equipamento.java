@@ -14,7 +14,7 @@ public class Equipamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String tipo;
     private String patrimonio;
+    private String tipo;
     private String status;
 }
