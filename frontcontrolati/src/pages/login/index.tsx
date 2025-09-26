@@ -20,12 +20,16 @@ const navigator = useNavigate();
     senha: ''
   });
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const handleChange = (event : React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData(prevState => ({
       ...prevState,
       [name]: value
     }));
+
+    setErrorMessage(null); 
   };
 
   const handleSubmit = async (event : React.FormEvent<HTMLFormElement>) => {
@@ -58,14 +62,26 @@ const navigator = useNavigate();
       // console.log(data.token);
 
     } catch (error) {
-
+      if (axios.isAxiosError(error) && error.response) {
+        
+        if (error.response.status === 401 || error.response.status === 403 || error.response.status === 400) {
+          setErrorMessage("Credenciais inválidas. Verifique seu e-mail e senha.");
+        } else {
+          setErrorMessage("Ocorreu um erro inesperado ao tentar fazer login. Tente novamente mais tarde.");
+        }
+      }  
+      console.error("Erro de login:", error);
     }
   }
 
   return (
     <form onSubmit={handleSubmit}>
       <h3 className="text-center mb-4">Login</h3>
-    
+        {errorMessage && (
+            <div className="alert alert-danger" role="alert">
+              {errorMessage}
+            </div>
+          )}
         <div className="mb-3">
           <label className="form-label">E-mail</label>
           <input 
