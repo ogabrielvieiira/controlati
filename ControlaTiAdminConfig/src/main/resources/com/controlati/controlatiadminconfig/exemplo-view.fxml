@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="237.0" prefWidth="354.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controlati.controlatiadminconfig.controller.ExemploController">
+   <children>
+      <Button layoutX="292.0" layoutY="198.0" mnemonicParsing="false" onAction="#voltar" text="Voltar" />
+      <Button layoutX="14.0" layoutY="198.0" mnemonicParsing="false" onAction="#consultarCep" text="Consultar" />
+      <Label layoutX="37.0" layoutY="30.0" text="CEP" />
+      <TextField fx:id="txtCep" layoutX="87.0" layoutY="19.0" prefHeight="37.0" prefWidth="253.0" />
+      <Label layoutX="20.0" layoutY="128.0" prefHeight="17.0" prefWidth="54.0" text="Endereço" />
+      <TextArea fx:id="txtEndereco" disable="true" editable="false" layoutX="87.0" layoutY="89.0" prefHeight="94.0" prefWidth="253.0" />
+   </children>
+</AnchorPane>
