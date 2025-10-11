@@ -1,6 +1,6 @@
-package com.senac.aulafull.repository;
+package com.senac.aulafull.domain.repository;
 
-import com.senac.aulafull.model.Token;
+import com.senac.aulafull.domain.entities.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.senac.aulafull.model;
+package com.senac.aulafull.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,12 +9,15 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "equipamento")
-public class Equipamento {
+public class Token {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String patrimonio;
-    private String tipo;
-    private String status;
+
+    private String token;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "usuario_id", nullable = true)
+    private Usuario usuario;
 }

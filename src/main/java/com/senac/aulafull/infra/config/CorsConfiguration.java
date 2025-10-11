@@ -1,4 +1,4 @@
-package com.senac.aulafull.config;
+package com.senac.aulafull.infra.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;

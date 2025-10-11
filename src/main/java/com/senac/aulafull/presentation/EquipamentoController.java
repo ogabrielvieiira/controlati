@@ -1,8 +1,8 @@
-package com.senac.aulafull.controller;
+package com.senac.aulafull.presentation;
 
-import com.senac.aulafull.dto.EquipamentoRequestDto;
-import com.senac.aulafull.model.Equipamento;
-import com.senac.aulafull.repository.EquipamentoRepository;
+import com.senac.aulafull.application.dto.EquipamentoRequestDto;
+import com.senac.aulafull.domain.entities.Equipamento;
+import com.senac.aulafull.domain.repository.EquipamentoRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

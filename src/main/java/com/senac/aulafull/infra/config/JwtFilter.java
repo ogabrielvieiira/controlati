@@ -1,6 +1,6 @@
-package com.senac.aulafull.config;
+package com.senac.aulafull.infra.config;
 
-import com.senac.aulafull.services.TokenService;
+import com.senac.aulafull.application.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {

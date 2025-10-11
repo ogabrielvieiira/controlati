@@ -1,8 +1,7 @@
-package com.senac.aulafull.repository;
+package com.senac.aulafull.domain.repository;
 
-import com.senac.aulafull.model.Usuario;
+import com.senac.aulafull.domain.entities.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,4 +14,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsUsuarioByEmailContainingAndSenha(String email, String senha);
 
     Optional<Usuario> findByEmail(String email);
+
+    Optional<Usuario> findByCPF(String cpf);
+
+
 }

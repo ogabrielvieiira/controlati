@@ -1,4 +1,4 @@
-package com.senac.aulafull.dto;
+package com.senac.aulafull.application.dto;
 
 public record EquipamentoRequestDto(String patrimonio, String tipo, String status) {
 }

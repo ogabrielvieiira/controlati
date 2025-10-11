@@ -1,7 +1,6 @@
-package com.senac.aulafull.services;
+package com.senac.aulafull.application.services;
 
-import com.senac.aulafull.dto.LoginRequestDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.senac.aulafull.application.dto.login.LoginRequestDto;
 import org.springframework.stereotype.Service;
 
 @Service

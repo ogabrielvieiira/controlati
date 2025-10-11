@@ -1,6 +1,6 @@
-package com.senac.aulafull.repository;
+package com.senac.aulafull.domain.repository;
 
-import com.senac.aulafull.model.Equipamento;
+import com.senac.aulafull.domain.entities.Equipamento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

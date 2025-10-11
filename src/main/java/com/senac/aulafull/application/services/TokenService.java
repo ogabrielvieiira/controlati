@@ -1,13 +1,12 @@
-package com.senac.aulafull.services;
+package com.senac.aulafull.application.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.senac.aulafull.dto.LoginRequestDto;
-import com.senac.aulafull.model.Token;
-import com.senac.aulafull.model.Usuario;
-import com.senac.aulafull.repository.TokenRepository;
-import com.senac.aulafull.repository.UsuarioRepository;
+import com.senac.aulafull.application.dto.login.LoginRequestDto;
+import com.senac.aulafull.domain.entities.Token;
+import com.senac.aulafull.domain.entities.Usuario;
+import com.senac.aulafull.domain.repository.TokenRepository;
+import com.senac.aulafull.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 
 @Service

@@ -1,13 +1,12 @@
-package com.senac.aulafull.controller;
+package com.senac.aulafull.presentation;
 
-import com.senac.aulafull.dto.LoginRequestDto;
-import com.senac.aulafull.dto.LoginResponseDto;
-import com.senac.aulafull.services.TokenService;
-import com.senac.aulafull.services.UsuarioService;
+import com.senac.aulafull.application.dto.login.LoginRequestDto;
+import com.senac.aulafull.application.dto.login.LoginResponseDto;
+import com.senac.aulafull.application.services.TokenService;
+import com.senac.aulafull.application.services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
