@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { loginSucesso } from "../../redux/authSlice";
+import { useDispatch } from "react-redux";
 
 interface LoginRequest {
   email: string,
@@ -13,6 +15,9 @@ interface LoginResponse {
 
 function Login() {
 const navigator = useNavigate();
+const dispatch = useDispatch();
+
+
   const API_URL = "http://localhost:8080/";
 
   const [formData, setFormData] = useState<LoginRequest>({
@@ -43,6 +48,12 @@ const navigator = useNavigate();
       const token = response.data.token;
       console.log()
       if (token != null) {
+
+        dispatch(loginSucesso({
+          usuario: {email: formData.email, nome: ""},
+          token: token
+        }));
+
         navigator("/")
       }
       // Exemplo de Fetch
