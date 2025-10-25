@@ -2,9 +2,9 @@ package com.senac.aulafull.application.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.senac.aulafull.application.dto.usuario.UsuarioPrincipalDto;
 import com.senac.aulafull.application.dto.login.LoginRequestDto;
 import com.senac.aulafull.domain.entities.Token;
-import com.senac.aulafull.domain.entities.Usuario;
 import com.senac.aulafull.domain.repository.TokenRepository;
 import com.senac.aulafull.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class TokenService {
     }
 
 
-    public Usuario validarToken(String token){
+    public UsuarioPrincipalDto validarToken(String token){
         Algorithm algorithm = Algorithm.HMAC256(secret);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer(emissor)
@@ -64,7 +64,7 @@ public class TokenService {
             throw new IllegalArgumentException("Token invalido");
         }
 
-        return tokenResult.getUsuario();
+        return new UsuarioPrincipalDto(tokenResult.getUsuario());
     }
 
     private Instant gerarDataExpiracao(){

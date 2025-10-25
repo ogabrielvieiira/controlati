@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,12 +24,12 @@ public class Usuario implements UserDetails {
     public Usuario (UsuarioRequestDto usuarioRequest){
         this.setCPF(usuarioRequest.CPF());
         this.setNome(usuarioRequest.nome());
-        this.setSenha(usuarioRequest.email());
+        this.setEmail(usuarioRequest.email());
         this.setSenha(usuarioRequest.senha());
         this.setRole(usuarioRequest.role());
 
-        if (this.getDataCadatro() == null) {
-            this.setDataCadatro(LocalDateTime.now());
+        if(this.getDataCadastro() == null) {
+            this.setDataCadastro(LocalDateTime.now());
         }
     }
 
@@ -45,15 +44,17 @@ public class Usuario implements UserDetails {
 
     private String role;
 
-    private LocalDateTime DataCadatro;
+    private LocalDateTime dataCadastro;
+
+    private String tokenSenha;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        if ("ROLE_ADMIN".equals(this.role)) {
+        if("ROLE_ADMIN".equals(this.role)){
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
                     new SimpleGrantedAuthority("ROLE_USER"));
-        } else {
+        }else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }

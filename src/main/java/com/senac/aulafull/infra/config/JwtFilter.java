@@ -25,6 +25,8 @@ public class JwtFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         if (path.equals("/auth/login")
+        || path.equals("/auth/esqueciminhasenha")
+        || path.equals("/auth/registrarnovasenha")
         || path.startsWith("/swagger-resources")
         || path.startsWith("/v3/api-docs")
         || path.startsWith("/webjars")
@@ -43,9 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 var usuario = tokenService.validarToken(token);
 
                 var autorizacao = new UsernamePasswordAuthenticationToken(
-                        usuario.getEmail(),
+                        usuario,
                         null,
-                        usuario.getAuthorities());
+                        usuario.autorizacao());
 
                 SecurityContextHolder.getContext().setAuthentication(autorizacao);
 
