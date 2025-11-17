@@ -2,6 +2,7 @@ package com.controlati.controlatiadminconfig.controller;
 
 import com.controlati.controlatiadminconfig.Utils.JPAUtils;
 import com.controlati.controlatiadminconfig.model.Usuario; // Importa o modelo Usuario
+import com.controlati.controlatiadminconfig.model.DAO.UsuarioDAO;
 import jakarta.persistence.EntityManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -45,37 +46,35 @@ public class ConfigAdminController {
 
         EntityManager entityManager = null;
         try {
+            // Obter o EntityManager
+            entityManager = JPAUtils.getEntityManager();
+
             // Criar a entidade Usuario
             Usuario admin = new Usuario();
             admin.setNome(nome);
             admin.setCPF(cpf);
             admin.setEmail(email);
-            admin.setSenha(senha); // No seu backend, esta senha será usada para login
-
-            // Definir a ROLE e a data (crucial para o requisito)
+            admin.setSenha(senha);
             admin.setRole("ROLE_ADMIN");
             admin.setDataCadastro(LocalDateTime.now());
 
-            // Salvar no banco de dados
-            entityManager = JPAUtils.getEntityManager(); //
-            entityManager.getTransaction().begin();
-            entityManager.persist(admin);
-            entityManager.getTransaction().commit();
+            // --- MUDANÇA AQUI: Usar o DAO para salvar ---
+            UsuarioDAO usuarioDAO = new UsuarioDAO(entityManager);
+            usuarioDAO.salvar(admin);
+            // --------------------------------------------
 
-            showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Administrador '" + nome + "' criado com sucesso!\nJá pode fazer login na aplicação web.");
+            showAlert(Alert.AlertType.INFORMATION, "Sucesso", "Administrador '" + nome + "' criado com sucesso!");
 
-            // Opcional: Limpar campos após salvar
             txtNome.clear();
             txtCpf.clear();
             txtEmail.clear();
             txtSenha.clear();
 
         } catch (Exception e) {
-            // Se algo der errado (ex: CPF/Email duplicado), desfaz a transação
             if (entityManager != null && entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
-            e.printStackTrace(); // Mostra o erro completo no console
+            e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erro ao Salvar", "Ocorreu um erro ao salvar:\n" + e.getMessage());
         } finally {
             if (entityManager != null) {
