@@ -2,10 +2,18 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controlati.controlatiadminconfig.controller.MenuController">
+<AnchorPane prefHeight="200.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controlati.controlatiadminconfig.controller.MenuController">
    <children>
-      <Button layoutX="229.0" layoutY="161.0" mnemonicParsing="false" onAction="#sair" prefHeight="25.0" prefWidth="57.0" text="Sair" />
-      <Button layoutX="69.0" layoutY="61.0" mnemonicParsing="false" onAction="#abrirMenuConfigAdmin" text="Configuração Adminstrador" />
+      <Label layoutX="60.0" layoutY="20.0" text="Painel Principal">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+
+      <Button layoutX="60.0" layoutY="70.0" mnemonicParsing="false" onAction="#abrirConfigAdmin" prefHeight="40.0" prefWidth="200.0" text="Criar Administrador" />
+
+      <Button layoutX="249.0" layoutY="168.0" mnemonicParsing="false" onAction="#sair" prefHeight="25.0" prefWidth="57.0" text="Sair" />
    </children>
 </AnchorPane>

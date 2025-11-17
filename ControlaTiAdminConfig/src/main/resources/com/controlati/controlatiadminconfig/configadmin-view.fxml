@@ -2,15 +2,31 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="237.0" prefWidth="354.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controlati.controlatiadminconfig.controller.ExemploController">
+<AnchorPane prefHeight="280.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controlati.controlatiadminconfig.controller.ConfigAdminController">
    <children>
-      <Button layoutX="292.0" layoutY="198.0" mnemonicParsing="false" onAction="#voltar" text="Voltar" />
-      <Button layoutX="14.0" layoutY="198.0" mnemonicParsing="false" onAction="#consultarCep" text="Consultar" />
-      <Label layoutX="37.0" layoutY="30.0" text="ID" />
-      <TextField fx:id="txtCep" layoutX="87.0" layoutY="19.0" prefHeight="37.0" prefWidth="253.0" />
-      <Label layoutX="20.0" layoutY="128.0" prefHeight="17.0" prefWidth="54.0" text="Endereço" />
-      <TextArea fx:id="txtEndereco" disable="true" editable="false" layoutX="87.0" layoutY="89.0" prefHeight="94.0" prefWidth="253.0" />
-      <Label layoutX="37.0" layoutY="62.0" text="Nome" />
+      <Label layoutX="108.0" layoutY="14.0" text="Criar Administrador">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+
+      <Button layoutX="324.0" layoutY="241.0" mnemonicParsing="false" onAction="#voltar" text="Voltar" />
+
+      <Button layoutX="14.0" layoutY="241.0" mnemonicParsing="false" onAction="#salvarAdministrador" prefWidth="90.0" text="Salvar Admin" />
+
+      <Label layoutX="25.0" layoutY="60.0" text="Nome:" />
+      <TextField fx:id="txtNome" layoutX="90.0" layoutY="56.0" prefHeight="25.0" prefWidth="270.0" promptText="Nome completo do admin" />
+
+      <Label layoutX="25.0" layoutY="100.0" text="CPF:" />
+      <TextField fx:id="txtCpf" layoutX="90.0" layoutY="96.0" prefHeight="25.0" prefWidth="270.0" promptText="123.456.789-00" />
+
+      <Label layoutX="25.0" layoutY="140.0" text="Email:" />
+      <TextField fx:id="txtEmail" layoutX="90.0" layoutY="136.0" prefHeight="25.0" prefWidth="270.0" promptText="admin@email.com" />
+
+      <Label layoutX="25.0" layoutY="180.0" text="Senha:" />
+      <PasswordField fx:id="txtSenha" layoutX="90.0" layoutY="176.0" prefHeight="25.0" prefWidth="270.0" promptText="Senha forte" />
+
    </children>
 </AnchorPane>
