@@ -1,9 +1,20 @@
-
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../redux/authSlice";
+import type { AppDispatch } from "../../redux/store";
 
 function Header(){
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate("/login");
+    };
+
     return(
         <header className="bg-dark">
-            <nav className="navbar navbar-expand-lg navbar-dark px-3">
+            <nav className="navbar navbar-expand-lg navbar-dark px-3 d-flex justify-content-between align-items-center">
                 <div className="navbar-nav">
                     <div className="mb-0 text-center">
                     <img
@@ -14,6 +25,11 @@ function Header(){
                     />
                     </div>
                 </div>
+
+                <button className="btn btn-outline-light btn-sm d-flex align-items-center" onClick={handleLogout}>
+                    <i className="bi bi-box-arrow-right me-2"></i>
+                    Sair
+                </button>
             </nav>
         </header>
     );

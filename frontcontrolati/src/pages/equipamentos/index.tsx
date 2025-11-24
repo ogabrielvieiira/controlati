@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-// 1. Importamos a nossa instância 'api' configurada (com interceptors)
-import api from '../../services/api'; 
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addEquipamento, type EquipamentoInput } from '../../redux/equipamentoSlice';
+import type { AppDispatch } from '../../redux/store';
 
-// Interface para os dados do formulário de cadastro
 interface EquipamentoFormData {
   tipo: string;
   patrimonio: string;
@@ -11,10 +11,9 @@ interface EquipamentoFormData {
 }
 
 function Equipamentos() {
-  // REMOVIDO: const API_URL = "http://localhost:8080/"; (O api.ts já sabe disto)
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>(); // Setup do dispatch
 
-  // Estado inicial do formulário
   const initialState: EquipamentoFormData = {
     tipo: '',
     patrimonio: '',
@@ -26,33 +25,36 @@ function Equipamentos() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Função para lidar com mudanças nos campos do formulário
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Função para lidar com o envio do formulário
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Impede o recarregamento da página
-
+    e.preventDefault();
     setIsSubmitting(true);
     setSuccessMessage(null);
     setErrorMessage(null);
 
+    const novoEquipamento: EquipamentoInput = {
+        tipo: formData.tipo,
+        patrimonio: formData.patrimonio,
+        status: formData.status
+    };
+
     try {
-      // 2. Usamos 'api.post' em vez de 'axios.post'.
-      // O token será injetado automaticamente pelo interceptor configurado no api.ts
-      await api.post("equipamentos", formData);
+      // MUDANÇA: Usamos o Redux para adicionar!
+      // O unwrap() permite pegar o erro ou sucesso da Promise do Redux
+      await dispatch(addEquipamento(novoEquipamento)).unwrap();
       
       setSuccessMessage("Equipamento cadastrado com sucesso!");
       
       setTimeout(() => {
         navigate('/');
-      }, 100);
+      }, 1000); // Um tempinho para ler a mensagem
 
-    } catch (err) {
-      setErrorMessage("Erro ao cadastrar equipamento. Verifique os dados ou o servidor.");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Erro ao cadastrar equipamento.");
       console.error("Erro no cadastro:", err);
     } finally {
       setIsSubmitting(false);
@@ -70,12 +72,10 @@ function Equipamentos() {
                 Cadastrar Novo Equipamento
               </h1>
 
-              {/* Alertas de Feedback */}
               {successMessage && <div className="alert alert-success">{successMessage}</div>}
               {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
 
               <form onSubmit={handleSubmit}>
-                {/* Campo Tipo */}
                 <div className="mb-3">
                   <label htmlFor="tipo" className="form-label">Tipo</label>
                   <input
@@ -90,7 +90,6 @@ function Equipamentos() {
                   />
                 </div>
 
-                {/* Campo Patrimônio */}
                 <div className="mb-3">
                   <label htmlFor="patrimonio" className="form-label">Patrimônio</label>
                   <input
@@ -100,12 +99,10 @@ function Equipamentos() {
                     name="patrimonio"
                     value={formData.patrimonio}
                     onChange={handleInputChange}
-                    placeholder="Código do patrimônio"
                     required
                   />
                 </div>
 
-                {/* Campo Status */}
                 <div className="mb-3">
                   <label htmlFor="status" className="form-label">Status</label>
                   <select
@@ -122,7 +119,6 @@ function Equipamentos() {
                   </select>
                 </div>
 
-                {/* Botão de Envio */}
                 <div className="d-grid">
                   <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                     {isSubmitting ? (

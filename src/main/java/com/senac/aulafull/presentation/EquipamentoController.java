@@ -38,7 +38,6 @@ public class EquipamentoController {
 
         Equipamento equipamento = equipamentoOpt.get();
 
-        // VALIDAÇÃO DE SEGURANÇA: Verifica se o equipamento pertence ao usuário logado
         if (!equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -49,7 +48,6 @@ public class EquipamentoController {
     @GetMapping
     @Operation(summary = "Listar todos equipamentos", description = "Método responsável por consultar os equipamentos do usuário logado")
     public ResponseEntity<?> consultarTodos(@AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-        // FILTRAGEM: Retorna apenas os equipamentos do usuário logado
         return ResponseEntity.ok(equipamentoRepository.findByUsuarioId(usuarioLogado.id()));
     }
 
@@ -61,9 +59,6 @@ public class EquipamentoController {
             Usuario usuario = usuarioRepository.findById(usuarioLogado.id())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-            // Cria o equipamento associando-o ao usuário logado
-            // Atenção à ordem dos parâmetros do construtor gerado pelo Lombok (@AllArgsConstructor)
-            // Ordem provável na Entidade: id, patrimonio, tipo, status, usuario
             var equipamentoBanco = new Equipamento(
                     null,
                     equipamentoDto.patrimonio(),

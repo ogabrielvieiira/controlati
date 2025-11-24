@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-// CORREÇÃO 1: Adicionado 'type' aqui
 import type { AppDispatch, RootState } from "../../redux/store";
 
 import { 
     fetchEquipamentos, 
     updateEquipamento, 
     deleteEquipamento, 
-    // CORREÇÃO 2: Adicionado 'type' nestes dois também
     type Equipamento, 
     type EquipamentoInput 
 } from "../../redux/equipamentoSlice";
 
 function Home() {
-    // O resto do código continua igual...
     const dispatch = useDispatch<AppDispatch>();
     
     const { lista: equipamentos, loading, error } = useSelector((state: RootState) => state.equipamentos);
+
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEquipamento, setEditingEquipamento] = useState<Equipamento | null>(null);
@@ -25,6 +24,15 @@ function Home() {
     useEffect(() => {
         dispatch(fetchEquipamentos());
     }, [dispatch]);
+
+    
+    const equipamentosFiltrados = equipamentos.filter(eq => 
+        eq.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        eq.patrimonio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        eq.status.toLowerCase().includes(searchTerm.toLowerCase())||
+        eq.id.toString().includes(searchTerm)
+    );
+
 
     const handleEditClick = (equipamento: Equipamento) => {
         setEditingEquipamento(equipamento);
@@ -63,6 +71,7 @@ function Home() {
         }
     };
 
+
     if (loading) {
         return <div className="container text-center mt-5"><p>Carregando lista de equipamentos...</p></div>;
     }
@@ -77,8 +86,27 @@ function Home() {
                 <i className="text-center"></i> Listagem de Equipamentos
             </h1>
 
-            {equipamentos.length === 0 ? (
-                <div className="alert alert-info text-center">Não há equipamentos cadastrados no momento.</div>
+            <div className="row justify-content-center mb-4">
+                <div className="col-md-6">
+                    <div className="input-group shadow-sm">
+                        <span className="input-group-text bg-white border-end-0">
+                            <i className="bi bi-search text-muted"></i>
+                        </span>
+                        <input 
+                            type="text" 
+                            className="form-control border-start-0" 
+                            placeholder="Pesquisar por equipamento" 
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {equipamentosFiltrados.length === 0 ? (
+                <div className="alert alert-info text-center">
+                    {searchTerm ? "Nenhum equipamento encontrado para a pesquisa." : "Não há equipamentos cadastrados."}
+                </div>
             ) : (
                 <div className="table-responsive">
                     <table className="table table-striped table-hover table-bordered shadow-sm align-middle">
@@ -92,7 +120,7 @@ function Home() {
                             </tr>
                         </thead>
                         <tbody>
-                            {equipamentos.map((equipamento) => (
+                            {equipamentosFiltrados.map((equipamento) => (
                                 <tr key={equipamento.id}>
                                     <td>{equipamento.id}</td>
                                     <td>{equipamento.tipo}</td>

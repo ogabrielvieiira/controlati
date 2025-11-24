@@ -26,11 +26,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests( auth ->
                         auth
                                 .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/esqueciminhasenha").permitAll()
+                                .requestMatchers("/auth/registrarnovasenha").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers("/swagger-resources/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
-                                .requestMatchers("/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
                                 .requestMatchers("/usuarios").hasRole("ADMIN")
                                 .anyRequest().authenticated()
 
