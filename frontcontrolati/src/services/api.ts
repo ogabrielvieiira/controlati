@@ -12,9 +12,6 @@ export const setupInterceptors = (store: any) => {
             const state = store.getState();
             const token = state.auth.token;
 
-            console.log("Tentando requisição para:", config.url);
-            console.log("Token no Redux:", token);
-
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             };
