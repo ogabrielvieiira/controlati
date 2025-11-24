@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// 1. Importamos a nossa instância 'api' configurada (com interceptors)
+import api from '../../services/api'; 
 import { useNavigate } from 'react-router-dom';
 
 // Interface para os dados do formulário de cadastro
@@ -10,7 +11,7 @@ interface EquipamentoFormData {
 }
 
 function Equipamentos() {
-  const API_URL = "http://localhost:8080/";
+  // REMOVIDO: const API_URL = "http://localhost:8080/"; (O api.ts já sabe disto)
   const navigate = useNavigate();
 
   // Estado inicial do formulário
@@ -40,7 +41,10 @@ function Equipamentos() {
     setErrorMessage(null);
 
     try {
-      await axios.post(API_URL + "equipamentos", formData);
+      // 2. Usamos 'api.post' em vez de 'axios.post'.
+      // O token será injetado automaticamente pelo interceptor configurado no api.ts
+      await api.post("equipamentos", formData);
+      
       setSuccessMessage("Equipamento cadastrado com sucesso!");
       
       setTimeout(() => {

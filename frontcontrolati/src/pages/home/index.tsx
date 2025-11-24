@@ -1,67 +1,41 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-// Interface para o objeto Equipamento
-interface Equipamento {
-  id: number;
-  tipo: string;
-  patrimonio: string;
-  status: string;
-}
+// CORREÇÃO 1: Adicionado 'type' aqui
+import type { AppDispatch, RootState } from "../../redux/store";
 
-// Interface para os dados do formulário (sem o ID)
-type EquipamentoFormData = Omit<Equipamento, 'id'>;
-
+import { 
+    fetchEquipamentos, 
+    updateEquipamento, 
+    deleteEquipamento, 
+    // CORREÇÃO 2: Adicionado 'type' nestes dois também
+    type Equipamento, 
+    type EquipamentoInput 
+} from "../../redux/equipamentoSlice";
 
 function Home() {
+    // O resto do código continua igual...
+    const dispatch = useDispatch<AppDispatch>();
     
-    const API_URL = "http://localhost:8080/";
+    const { lista: equipamentos, loading, error } = useSelector((state: RootState) => state.equipamentos);
 
-    const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // --- Estados para o Modal de Edição ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEquipamento, setEditingEquipamento] = useState<Equipamento | null>(null);
 
-
-    // --- Lógica de Busca de Dados ---
     useEffect(() => {
-        const fetchEquipamentos = async () => {
-            try {
-                const response = await axios.get<Equipamento[]>(API_URL + "equipamentos");
-                setEquipamentos(response.data);
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    setError(`Erro ao carregar equipamentos: Status ${err.response?.status || 'desconhecido'}. Verifique o backend.`);
-                } else {
-                    setError("Erro de rede. Não foi possível conectar ao servidor.");
-                }
-                console.error("Erro ao buscar equipamentos:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+        dispatch(fetchEquipamentos());
+    }, [dispatch]);
 
-        fetchEquipamentos();
-    }, []);
-
-    // --- Funções de Ação (CRUD) ---
-
-    // Abre o modal e define o equipamento a ser editado
     const handleEditClick = (equipamento: Equipamento) => {
         setEditingEquipamento(equipamento);
         setIsModalOpen(true);
     };
     
-    // Fecha o modal e limpa o estado
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setEditingEquipamento(null);
     };
     
-    // Lida com mudanças nos inputs do formulário do modal
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editingEquipamento) {
             const { name, value } = e.target;
@@ -69,48 +43,25 @@ function Home() {
         }
     };
 
-    // Envia a requisição PUT para atualizar o equipamento
     const handleUpdate = async (e: React.FormEvent) => {
-        e.preventDefault(); // Impede o recarregamento da página
+        e.preventDefault();
         if (!editingEquipamento) return;
 
-        // Os dados a serem enviados não precisam do ID no corpo
-        const updatedData: EquipamentoFormData = {
+        const updatedData: EquipamentoInput = {
             tipo: editingEquipamento.tipo,
             patrimonio: editingEquipamento.patrimonio,
             status: editingEquipamento.status,
         };
 
-        try {
-            const response = await axios.put<Equipamento>(`${API_URL}equipamentos/${editingEquipamento.id}`, updatedData);
-            
-            // Atualiza a lista de equipamentos no estado com os novos dados
-            setEquipamentos(equipamentos.map(eq => 
-                eq.id === editingEquipamento.id ? response.data : eq
-            ));
-            
-            handleCloseModal(); // Fecha o modal após o sucesso
-
-        } catch (err) {
-            console.error("Erro ao atualizar equipamento:", err);
-            alert("Não foi possível atualizar o equipamento. Verifique o console.");
-        }
+        await dispatch(updateEquipamento({ id: editingEquipamento.id, dados: updatedData }));
+        handleCloseModal();
     };
-
 
     const handleDelete = async (id: number) => {
         if (window.confirm("Tem certeza de que deseja excluir este equipamento?")) {
-            try {
-                await axios.delete(`${API_URL}equipamentos/${id}`);
-                setEquipamentos(equipamentos.filter(equipamento => equipamento.id !== id));
-            } catch (err) {
-                console.error("Erro ao deletar equipamento:", err);
-                alert("Não foi possível excluir o equipamento. Verifique o console para mais detalhes.");
-            }
+            dispatch(deleteEquipamento(id));
         }
     };
-
-    // --- Lógica de Renderização ---
 
     if (loading) {
         return <div className="container text-center mt-5"><p>Carregando lista de equipamentos...</p></div>;
@@ -168,7 +119,6 @@ function Home() {
                 </div>
             )}
 
-            {/* --- Modal de Edição --- */}
             {isModalOpen && editingEquipamento && (
                 <div className="modal show fade" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
                     <div className="modal-dialog modal-dialog-centered">
@@ -181,38 +131,18 @@ function Home() {
                                 <form onSubmit={handleUpdate}>
                                     <div className="mb-3">
                                         <label htmlFor="tipo" className="form-label">Tipo</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="tipo"
-                                            name="tipo"
-                                            value={editingEquipamento.tipo}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
+                                        <input type="text" className="form-control" id="tipo" name="tipo"
+                                            value={editingEquipamento.tipo} onChange={handleInputChange} required />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="patrimonio" className="form-label">Patrimônio</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            id="patrimonio"
-                                            name="patrimonio"
-                                            value={editingEquipamento.patrimonio}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
+                                        <input type="text" className="form-control" id="patrimonio" name="patrimonio"
+                                            value={editingEquipamento.patrimonio} onChange={handleInputChange} required />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="status" className="form-label">Status</label>
-                                        <select
-                                            className="form-select"
-                                            id="status"
-                                            name="status"
-                                            value={editingEquipamento.status}
-                                            onChange={handleInputChange}
-                                            required
-                                        >
+                                        <select className="form-select" id="status" name="status"
+                                            value={editingEquipamento.status} onChange={handleInputChange} required>
                                             <option value="Disponível">Disponível</option>
                                             <option value="Em Uso">Em Uso</option>
                                             <option value="Manutenção">Manutenção</option>

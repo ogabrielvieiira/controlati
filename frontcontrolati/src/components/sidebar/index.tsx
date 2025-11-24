@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-
 function Sidebar(){
     
     return(
@@ -9,7 +8,9 @@ function Sidebar(){
         <div className="bg-dark text-light vh-100 p-3" style={{ width: '250px' }}>
           <ul className="nav flex-column">
             <li className="nav-item mb-2">
-              <a className="nav-link text-light" href="/">Home</a>
+              <Link to="/" className="nav-link text-light">
+                Home
+              </Link>
             </li>
             <li className="nav-item">
               <a
@@ -39,7 +40,6 @@ function Sidebar(){
           {/* Aqui vai o resto do conteúdo */}
         </div>
       </div>
-      
     )
 }
 

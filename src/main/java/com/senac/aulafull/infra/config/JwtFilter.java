@@ -30,7 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
         || path.startsWith("/swagger-resources")
         || path.startsWith("/v3/api-docs")
         || path.startsWith("/webjars")
-        || path.startsWith("/")
         || path.startsWith("/swagger-ui")) {
 
             filterChain.doFilter(request, response);
@@ -60,6 +59,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token não informado");
             return;

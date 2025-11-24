@@ -4,6 +4,9 @@ import AppRoutes from './route'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
+import { setupInterceptors } from './services/api'
+
+setupInterceptors(store);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
