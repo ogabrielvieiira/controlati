@@ -120,8 +120,7 @@ const dispatch = useDispatch();
         <button type="submit" className="btn btn-primary w-100">Entrar</button>
 
       <div className="text-center mt-3">
-        <span>Não tem conta? </span>
-        <Link to="/cadastro">Cadastre-se</Link>
+        <span>Esqueceu a senha? </span>
       </div>
     </form>
   );

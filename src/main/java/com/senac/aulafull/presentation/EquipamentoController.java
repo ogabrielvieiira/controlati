@@ -27,8 +27,13 @@ public class EquipamentoController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    private boolean isAdmin(UsuarioPrincipalDto usuarioPrincipal) {
+        return usuarioPrincipal.autorizacao().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+    }
+
     @GetMapping("/{id}")
-    @Operation(summary = "Listar um equipamento", description = "Método responsável por consultar um equipamento específico do usuário logado")
+    @Operation(summary = "Listar um equipamento", description = "Método responsável por consultar um equipamento específico")
     public ResponseEntity<?> consultaPorId(@PathVariable Long id, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
         var equipamentoOpt = equipamentoRepository.findById(id);
 
@@ -38,7 +43,7 @@ public class EquipamentoController {
 
         Equipamento equipamento = equipamentoOpt.get();
 
-        if (!equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
+        if (!isAdmin(usuarioLogado) && !equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -46,16 +51,20 @@ public class EquipamentoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todos equipamentos", description = "Método responsável por consultar os equipamentos do usuário logado")
+    @Operation(summary = "Listar todos equipamentos", description = "Método responsável por consultar os equipamentos")
     public ResponseEntity<?> consultarTodos(@AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-        return ResponseEntity.ok(equipamentoRepository.findByUsuarioId(usuarioLogado.id()));
+
+        if (isAdmin(usuarioLogado)) {
+            return ResponseEntity.ok(equipamentoRepository.findAll());
+        } else {
+            return ResponseEntity.ok(equipamentoRepository.findByUsuarioId(usuarioLogado.id()));
+        }
     }
 
     @PostMapping
     @Operation(summary = "Salvar Equipamento", description = "Método responsável por criar os equipamentos para o usuário logado")
     public ResponseEntity<?> salvarEquipamento(@RequestBody EquipamentoRequestDto equipamentoDto, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
         try {
-            // Busca a entidade Usuário completa para associar ao equipamento
             Usuario usuario = usuarioRepository.findById(usuarioLogado.id())
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -83,12 +92,10 @@ public class EquipamentoController {
 
         return equipamentoRepository.findById(id)
                 .map(equipamentoExistente -> {
-                    // VALIDAÇÃO DE SEGURANÇA: O equipamento pertence ao usuário?
-                    if (!equipamentoExistente.getUsuario().getId().equals(usuarioLogado.id())) {
+                    if (!isAdmin(usuarioLogado) && !equipamentoExistente.getUsuario().getId().equals(usuarioLogado.id())) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                     }
 
-                    // Atualiza os dados
                     equipamentoExistente.setTipo(equipamentoDetails.tipo());
                     equipamentoExistente.setPatrimonio(equipamentoDetails.patrimonio());
                     equipamentoExistente.setStatus(equipamentoDetails.status());
@@ -111,8 +118,7 @@ public class EquipamentoController {
 
         Equipamento equipamento = equipamentoOpt.get();
 
-        // VALIDAÇÃO DE SEGURANÇA
-        if (!equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
+        if (!isAdmin(usuarioLogado) && !equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

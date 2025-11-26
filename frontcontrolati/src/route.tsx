@@ -6,7 +6,7 @@ import LayoutLogin from "./components/LayoutLogin";
 import Cadastro from "./pages/cadastrese";
 import Usuario from "./pages/usuario";
 import Equipamentos from "./pages/equipamentos";
-
+import ListaUsuarios from "./pages/lista-usuarios";
 
 function AppRoutes() {
     return(
@@ -19,6 +19,7 @@ function AppRoutes() {
                 <Route path="/" element={<Home/>}/>
                 <Route path="/usuario" element={<Usuario/>}/>
                 <Route path="/equipamentos" element={<Equipamentos/>}/>
+                <Route path="/usuarios-lista" element={<ListaUsuarios/>}/>
             </Route>
         </Routes>
     );

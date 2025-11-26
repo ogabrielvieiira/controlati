@@ -17,7 +17,6 @@ function Home() {
     const { lista: equipamentos, loading, error } = useSelector((state: RootState) => state.equipamentos);
 
     const [searchTerm, setSearchTerm] = useState("");
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEquipamento, setEditingEquipamento] = useState<Equipamento | null>(null);
 
@@ -25,15 +24,27 @@ function Home() {
         dispatch(fetchEquipamentos());
     }, [dispatch]);
 
-    
     const equipamentosFiltrados = equipamentos.filter(eq => 
         eq.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         eq.patrimonio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        eq.status.toLowerCase().includes(searchTerm.toLowerCase())||
+        eq.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
         eq.id.toString().includes(searchTerm)
     );
 
+    // --- NOVA FUNÇÃO: Alterar Status (Atribuir/Devolver) ---
+    const handleStatusChange = async (equipamento: Equipamento, novoStatus: string) => {
+        // Prepara os dados mantendo tipo/patrimônio e mudando só o status
+        const updatedData: EquipamentoInput = {
+            tipo: equipamento.tipo,
+            patrimonio: equipamento.patrimonio,
+            status: novoStatus,
+        };
 
+        // Dispara a ação de atualização
+        await dispatch(updateEquipamento({ id: equipamento.id, dados: updatedData }));
+    };
+
+    // --- Handlers Existentes ---
     const handleEditClick = (equipamento: Equipamento) => {
         setEditingEquipamento(equipamento);
         setIsModalOpen(true);
@@ -71,7 +82,6 @@ function Home() {
         }
     };
 
-
     if (loading) {
         return <div className="container text-center mt-5"><p>Carregando lista de equipamentos...</p></div>;
     }
@@ -95,7 +105,7 @@ function Home() {
                         <input 
                             type="text" 
                             className="form-control border-start-0" 
-                            placeholder="Pesquisar por equipamento" 
+                            placeholder="Pesquisar por ID, tipo, patrimônio..." 
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -109,14 +119,14 @@ function Home() {
                 </div>
             ) : (
                 <div className="table-responsive">
-                    <table className="table table-striped table-hover table-bordered shadow-sm align-middle">
+                    <table className="table table-striped table-hover table-bordered shadow-sm align-middle" style={{ tableLayout: 'fixed' }}>
                         <thead className="table-dark">
                             <tr>
                                 <th>ID</th>
                                 <th>Tipo</th>
                                 <th>Patrimônio</th>
                                 <th>Status</th>
-                                <th className="text-center">Ações</th>
+                                <th className="text-center" style={{ width: '250px' }}>Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,6 +143,28 @@ function Home() {
                                         }`}>{equipamento.status}</span>
                                     </td>
                                     <td className="text-center">
+                                        {/* BOTÕES CONDICIONAIS (REGRA DE NEGÓCIO) */}
+                                        {equipamento.status === 'Disponível' && (
+                                            <button 
+                                                className="btn btn-success btn-sm me-2" 
+                                                onClick={() => handleStatusChange(equipamento, 'Em Uso')}
+                                                title="Atribuir Equipamento"
+                                            >
+                                                <i className="bi bi-person-check-fill me-1"></i>
+                                            </button>
+                                        )}
+                                        
+                                        {equipamento.status === 'Em Uso' && (
+                                            <button 
+                                                className="btn btn-info btn-sm me-2 text-white" 
+                                                onClick={() => handleStatusChange(equipamento, 'Disponível')}
+                                                title="Devolver Equipamento"
+                                            >
+                                                <i className="bi bi-box-arrow-in-left me-1"></i>
+                                            </button>
+                                        )}
+
+                                        {/* Botões de Manutenção (Editar/Excluir) */}
                                         <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditClick(equipamento)} title="Editar">
                                             <i className="bi bi-pencil-fill"></i>
                                         </button>

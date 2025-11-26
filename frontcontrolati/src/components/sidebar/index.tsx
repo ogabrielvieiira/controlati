@@ -32,12 +32,26 @@ function Sidebar(){
                 </li>
               </ul>
             </li>
+            <li className="nav-item">
+              <a
+                className="nav-link text-light"
+                data-bs-toggle="collapse"
+                href="#submenugestao"
+                role="button"
+                aria-expanded="false"
+                aria-controls="submenugestao"
+              >
+                Administrativo
+              </a>
+              <ul className="collapse list-unstyled ms-3" id="submenugestao">
+                <li>
+                  <Link to="/usuarios-lista" className="nav-link text-white">
+                    Lista de Usuários
+                  </Link>
+                </li>
+              </ul>
+            </li>
           </ul>
-        </div>
-      
-        {/* Conteúdo principal */}
-        <div className="flex-grow-1 p-3">
-          {/* Aqui vai o resto do conteúdo */}
         </div>
       </div>
     )
