@@ -119,9 +119,11 @@ const dispatch = useDispatch();
         </div>
         <button type="submit" className="btn btn-primary w-100">Entrar</button>
 
-      <div className="text-center mt-3">
-        <span>Esqueceu a senha? </span>
-      </div>
+      <div className="mb-3 text-end">
+            <Link to="/recuperar-senha" style={{ fontSize: '0.9rem' }}>
+                Esqueceu a senha?
+            </Link>
+        </div>
     </form>
   );
 }
