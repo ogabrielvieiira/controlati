@@ -1,7 +1,11 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
-import api from "../services/api";
+import authService from "../services/authService";
+import type { 
+    CadastroInput, 
+    EsqueciSenhaInput, 
+    RedefinirSenhaInput 
+} from "../services/authService";
 
-// Tipos existentes
 interface Usuario {
   email: string;
   nome: string;
@@ -15,24 +19,8 @@ interface AuthState {
   error: string | null;
 }
 
-export interface CadastroInput {
-  nome: string;
-  CPF: string;
-  email: string;
-  senha: string;
-  role: string;
-}
 
-// --- NOVOS TIPOS PARA RECUPERAÇÃO ---
-export interface EsqueciSenhaInput {
-    email: string;
-}
-
-export interface RedefinirSenhaInput {
-    email: string;
-    token: string; // O código recebido por email
-    senha: string; // A nova senha
-}
+export type { CadastroInput, EsqueciSenhaInput, RedefinirSenhaInput };
 
 const initialState: AuthState = {
   isAutenticado: false,
@@ -47,28 +35,21 @@ const initialState: AuthState = {
 export const cadastrarUsuario = createAsyncThunk(
   'auth/cadastrar',
   async (dados: CadastroInput) => {
-    const response = await api.post("usuarios", dados);
-    return response.data;
+    return await authService.cadastrar(dados);
   }
 );
 
-// NOVO: Solicitar envio de e-mail
 export const solicitarRecuperacao = createAsyncThunk(
     'auth/solicitarRecuperacao',
     async (dados: EsqueciSenhaInput) => {
-        // Endpoint: /auth/esqueciminhasenha
-        await api.post("auth/esqueciminhasenha", dados);
-        return; // Não retorna dados, apenas 200 OK
+        return await authService.solicitarRecuperacao(dados);
     }
 );
 
-// NOVO: Enviar nova senha com o token
 export const redefinirSenha = createAsyncThunk(
     'auth/redefinirSenha',
     async (dados: RedefinirSenhaInput) => {
-        // Endpoint: /auth/registrarnovasenha
-        await api.post("auth/registrarnovasenha", dados);
-        return;
+        return await authService.redefinirSenha(dados);
     }
 );
 

@@ -1,22 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../services/api";
+import equipamentoService from "../services/equipamentoService";
 
-// Tipagem do Equipamento
-export interface Equipamento {
-    id: number;
-    tipo: string;
-    patrimonio: string;
-    status: string;
-}
+import type { Equipamento, EquipamentoInput } from "../services/equipamentoService";
 
-// Tipagem para criar/editar (sem ID)
-export interface EquipamentoInput {
-    tipo: string;
-    patrimonio: string;
-    status: string;
-}
-
-// Estado do Slice
 interface EquipamentoState {
     lista: Equipamento[];
     loading: boolean;
@@ -29,30 +15,22 @@ const initialState: EquipamentoState = {
     error: null
 };
 
-// --- THUNKS (Chamadas à API) ---
+// --- THUNKS ---
 
-// Buscar Todos
 export const fetchEquipamentos = createAsyncThunk('equipamentos/fetch', async () => {
-    const response = await api.get<Equipamento[]>('equipamentos');
-    return response.data;
+    return await equipamentoService.getAll();
 });
 
-// Adicionar
 export const addEquipamento = createAsyncThunk('equipamentos/add', async (novo: EquipamentoInput) => {
-    const response = await api.post<Equipamento>('equipamentos', novo);
-    return response.data;
+    return await equipamentoService.create(novo);
 });
 
-// Atualizar
 export const updateEquipamento = createAsyncThunk('equipamentos/update', async ({ id, dados }: { id: number, dados: EquipamentoInput }) => {
-    const response = await api.put<Equipamento>(`equipamentos/${id}`, dados);
-    return response.data;
+    return await equipamentoService.update(id, dados);
 });
 
-// Remover
 export const deleteEquipamento = createAsyncThunk('equipamentos/delete', async (id: number) => {
-    await api.delete(`equipamentos/${id}`);
-    return id;
+    return await equipamentoService.delete(id);
 });
 
 // --- SLICE ---
@@ -62,31 +40,17 @@ const equipamentoSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            // Fetch
-            .addCase(fetchEquipamentos.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchEquipamentos.fulfilled, (state, action) => {
-                state.loading = false;
-                state.lista = action.payload;
-            })
-            .addCase(fetchEquipamentos.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || "Erro ao buscar equipamentos";
-            })
-            // Add
-            .addCase(addEquipamento.fulfilled, (state, action) => {
-                state.lista.push(action.payload);
-            })
-            // Update
+            .addCase(fetchEquipamentos.pending, (state) => { state.loading = true; state.error = null; })
+            .addCase(fetchEquipamentos.fulfilled, (state, action) => { state.loading = false; state.lista = action.payload; })
+            .addCase(fetchEquipamentos.rejected, (state, action) => { state.loading = false; state.error = action.error.message || "Erro ao buscar equipamentos"; })
+            
+            .addCase(addEquipamento.fulfilled, (state, action) => { state.lista.push(action.payload); })
+            
             .addCase(updateEquipamento.fulfilled, (state, action) => {
                 const index = state.lista.findIndex(eq => eq.id === action.payload.id);
-                if (index !== -1) {
-                    state.lista[index] = action.payload;
-                }
+                if (index !== -1) { state.lista[index] = action.payload; }
             })
-            // Delete
+            
             .addCase(deleteEquipamento.fulfilled, (state, action) => {
                 state.lista = state.lista.filter(eq => eq.id !== action.payload);
             });

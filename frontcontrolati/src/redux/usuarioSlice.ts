@@ -1,20 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../services/api";
+import usuarioService from "../services/usuarioService";
 
-export interface UsuarioInput {
-  nome: string;
-  CPF: string;
-  email: string;
-  senha: string;
-  role: string;
-}
-
-export interface UsuarioResponse {
-    id: number;
-    nome: string;
-    CPF: string;
-    email: string;
-}
+import type { UsuarioInput, UsuarioResponse } from "../services/usuarioService";
 
 interface UsuarioState {
   lista: UsuarioResponse[];
@@ -30,20 +17,19 @@ const initialState: UsuarioState = {
   success: false
 };
 
+// --- THUNKS ---
 
 export const addUsuario = createAsyncThunk(
     'usuarios/add', 
     async (novoUsuario: UsuarioInput) => {
-        const response = await api.post("usuarios", novoUsuario);
-        return response.data;
+        return await usuarioService.create(novoUsuario);
     }
 );
 
 export const fetchUsuarios = createAsyncThunk(
     'usuarios/fetchAll',
     async () => {
-        const response = await api.get<UsuarioResponse[]>("usuarios");
-        return response.data;
+        return await usuarioService.getAll();
     }
 );
 
@@ -58,32 +44,13 @@ const usuarioSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(addUsuario.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-                state.success = false;
-            })
-            .addCase(addUsuario.fulfilled, (state) => {
-                state.loading = false;
-                state.success = true;
-            })
-            .addCase(addUsuario.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || "Erro ao criar usuário";
-            })
+            .addCase(addUsuario.pending, (state) => { state.loading = true; state.error = null; state.success = false; })
+            .addCase(addUsuario.fulfilled, (state) => { state.loading = false; state.success = true; })
+            .addCase(addUsuario.rejected, (state, action) => { state.loading = false; state.error = action.error.message || "Erro ao criar usuário"; })
             
-            .addCase(fetchUsuarios.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchUsuarios.fulfilled, (state, action) => {
-                state.loading = false;
-                state.lista = action.payload;
-            })
-            .addCase(fetchUsuarios.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || "Erro ao buscar usuários (Acesso Negado?)";
-            });
+            .addCase(fetchUsuarios.pending, (state) => { state.loading = true; state.error = null; })
+            .addCase(fetchUsuarios.fulfilled, (state, action) => { state.loading = false; state.lista = action.payload; })
+            .addCase(fetchUsuarios.rejected, (state, action) => { state.loading = false; state.error = action.error.message || "Erro ao buscar usuários (Acesso Negado?)"; });
     }
 });
 

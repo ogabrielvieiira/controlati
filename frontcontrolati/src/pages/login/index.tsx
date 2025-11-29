@@ -1,24 +1,14 @@
-import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginSucesso } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
-
-interface LoginRequest {
-  email: string,
-  senha: string
-}
-
-interface LoginResponse {
-  token: string
-}
+import { loginSucesso } from "../../redux/authSlice";
+import authService from "../../services/authService"; 
+// MUDANÇA AQUI: Usar 'import type' para interfaces
+import type { LoginRequest } from "../../services/authService";
 
 function Login() {
-const navigator = useNavigate();
-const dispatch = useDispatch();
-
-
-  const API_URL = "http://localhost:8080/";
+  const navigator = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
@@ -38,50 +28,31 @@ const dispatch = useDispatch();
   };
 
   const handleSubmit = async (event : React.FormEvent<HTMLFormElement>) => {
-
     event.preventDefault();
     
     try {
-            
-      const response = await axios.post<LoginResponse>(API_URL + "auth/login", formData);
+      const data = await authService.login(formData);
 
-      const token = response.data.token;
-      console.log()
-      if (token != null) {
-
+      if (data.token) {
         dispatch(loginSucesso({
           usuario: {email: formData.email, nome: ""},
-          token: token
+          token: data.token
         }));
 
         navigator("/")
       }
-      // Exemplo de Fetch
-      // const response = await fetch(API_URL + "auth/login",{
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json"
-      //   },
-      //   body: JSON.stringify(formData)
-      // });
 
-      // if (response.ok) {
-      //   throw new Error("Erro ao fazer login");
-      // }
-
-      // const data: LoginResponse = await response.json();
-      // console.log(data.token);
-
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        
+    } catch (error: any) {
+      if (error.response) {
         if (error.response.status === 401 || error.response.status === 403 || error.response.status === 400) {
           setErrorMessage("Credenciais inválidas. Verifique seu e-mail e senha.");
         } else {
           setErrorMessage("Ocorreu um erro inesperado ao tentar fazer login. Tente novamente mais tarde.");
         }
-      }  
-      console.error("Erro de login:", error);
+      } else { 
+          console.error("Erro de login:", error);
+          setErrorMessage("Erro de conexão com o servidor.");
+      }
     }
   }
 

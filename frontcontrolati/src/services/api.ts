@@ -1,6 +1,4 @@
 import axios from "axios";
-import { logout } from "../redux/authSlice";
-// IMPORTANTE: Removemos a importação direta da 'store' para evitar o ciclo
 
 const api = axios.create({
   baseURL: 'http://localhost:8080/',
@@ -30,7 +28,7 @@ export const setupInterceptors = (store: any) => {
         },
         (error) => {
             if (error.response && error.response.status === 401) {
-                store.dispatch(logout());
+                store.dispatch({ type: 'auth/logout' });
             }
             return Promise.reject(error);
         }
