@@ -1,11 +1,9 @@
 package com.senac.aulafull.presentation;
 
-import com.senac.aulafull.application.dto.EquipamentoRequestDto;
+import com.senac.aulafull.application.dto.equipamentos.EquipamentoRequestDto;
+import com.senac.aulafull.application.dto.equipamentos.EquipamentoResponseDto;
 import com.senac.aulafull.application.dto.usuario.UsuarioPrincipalDto;
-import com.senac.aulafull.domain.entities.Equipamento;
-import com.senac.aulafull.domain.entities.Usuario;
-import com.senac.aulafull.domain.repository.EquipamentoRepository;
-import com.senac.aulafull.domain.repository.UsuarioRepository;
+import com.senac.aulafull.application.services.EquipamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/equipamentos")
@@ -22,64 +20,34 @@ import java.util.Optional;
 public class EquipamentoController {
 
     @Autowired
-    private EquipamentoRepository equipamentoRepository;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    private boolean isAdmin(UsuarioPrincipalDto usuarioPrincipal) {
-        return usuarioPrincipal.autorizacao().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
-    }
+    private EquipamentoService equipamentoService;
 
     @GetMapping("/{id}")
     @Operation(summary = "Listar um equipamento", description = "Método responsável por consultar um equipamento específico")
-    public ResponseEntity<?> consultaPorId(@PathVariable Long id, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-        var equipamentoOpt = equipamentoRepository.findById(id);
-
-        if (equipamentoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Equipamento equipamento = equipamentoOpt.get();
-
-        if (!isAdmin(usuarioLogado) && !equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
+    public ResponseEntity<EquipamentoResponseDto> consultaPorId(@PathVariable Long id, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
+        try {
+            var equipamentoDto = equipamentoService.consultarPorId(id, usuarioLogado);
+            if (equipamentoDto == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(equipamentoDto);
+        } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-
-        return ResponseEntity.ok(equipamento);
     }
 
     @GetMapping
     @Operation(summary = "Listar todos equipamentos", description = "Método responsável por consultar os equipamentos")
-    public ResponseEntity<?> consultarTodos(@AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-
-        if (isAdmin(usuarioLogado)) {
-            return ResponseEntity.ok(equipamentoRepository.findAll());
-        } else {
-            return ResponseEntity.ok(equipamentoRepository.findByUsuarioId(usuarioLogado.id()));
-        }
+    public ResponseEntity<List<EquipamentoResponseDto>> consultarTodos(@AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
+        return ResponseEntity.ok(equipamentoService.consultarTodos(usuarioLogado));
     }
 
     @PostMapping
     @Operation(summary = "Salvar Equipamento", description = "Método responsável por criar os equipamentos para o usuário logado")
-    public ResponseEntity<?> salvarEquipamento(@RequestBody EquipamentoRequestDto equipamentoDto, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
+    public ResponseEntity<EquipamentoResponseDto> salvarEquipamento(@RequestBody EquipamentoRequestDto equipamentoDto, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
         try {
-            Usuario usuario = usuarioRepository.findById(usuarioLogado.id())
-                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-            var equipamentoBanco = new Equipamento(
-                    null,
-                    equipamentoDto.patrimonio(),
-                    equipamentoDto.tipo(),
-                    equipamentoDto.status(),
-                    usuario
-            );
-
-            var equipamentoResponse = equipamentoRepository.save(equipamentoBanco);
-
+            var equipamentoResponse = equipamentoService.salvarEquipamento(equipamentoDto, usuarioLogado);
             return ResponseEntity.ok(equipamentoResponse);
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().build();
@@ -88,43 +56,31 @@ public class EquipamentoController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar Equipamento", description = "Método responsável por atualizar um equipamento existente")
-    public ResponseEntity<?> atualizarEquipamento(@PathVariable Long id, @RequestBody EquipamentoRequestDto equipamentoDetails, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-
-        return equipamentoRepository.findById(id)
-                .map(equipamentoExistente -> {
-                    if (!isAdmin(usuarioLogado) && !equipamentoExistente.getUsuario().getId().equals(usuarioLogado.id())) {
-                        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-                    }
-
-                    equipamentoExistente.setTipo(equipamentoDetails.tipo());
-                    equipamentoExistente.setPatrimonio(equipamentoDetails.patrimonio());
-                    equipamentoExistente.setStatus(equipamentoDetails.status());
-
-                    Equipamento equipamentoAtualizado = equipamentoRepository.save(equipamentoExistente);
-                    return ResponseEntity.ok(equipamentoAtualizado);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<EquipamentoResponseDto> atualizarEquipamento(@PathVariable Long id, @RequestBody EquipamentoRequestDto equipamentoDetails, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
+        try {
+            var equipamentoAtualizado = equipamentoService.atualizarEquipamento(id, equipamentoDetails, usuarioLogado);
+            if (equipamentoAtualizado == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(equipamentoAtualizado);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar Equipamento", description = "Método responsável por deletar um equipamento pelo seu ID")
     public ResponseEntity<?> deletarEquipamento(@PathVariable Long id, @AuthenticationPrincipal UsuarioPrincipalDto usuarioLogado) {
-
-        Optional<Equipamento> equipamentoOpt = equipamentoRepository.findById(id);
-
-        if (equipamentoOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Equipamento equipamento = equipamentoOpt.get();
-
-        if (!isAdmin(usuarioLogado) && !equipamento.getUsuario().getId().equals(usuarioLogado.id())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         try {
-            equipamentoRepository.deleteById(id);
+            boolean deletado = equipamentoService.deletarEquipamento(id, usuarioLogado);
+            if (!deletado) {
+                return ResponseEntity.notFound().build();
+            }
             return ResponseEntity.noContent().build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao deletar o equipamento: " + e.getMessage());
         }
